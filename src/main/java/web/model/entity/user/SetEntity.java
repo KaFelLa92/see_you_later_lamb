@@ -53,6 +53,7 @@ public class SetEntity extends BaseTime {
                 .set_work( this.set_work )
                 .set_traffic( this.set_traffic )
                 .set_language( this.set_language )
+                .user_id( this.usersEntity.getUser_id() )
                 .create_date( this.getCreate_date().toString() )
                 .update_date( this.getUpdate_date().toString() )
                 .build();

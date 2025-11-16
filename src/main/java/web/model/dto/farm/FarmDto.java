@@ -1,4 +1,4 @@
-package web.model.dto.lamb;
+package web.model.dto.farm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProbDto {
+public class FarmDto {
 
     // 1. 테이블 설계
 
