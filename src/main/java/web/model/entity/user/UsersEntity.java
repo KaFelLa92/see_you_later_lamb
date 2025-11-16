@@ -5,6 +5,7 @@ import lombok.*;
 import web.model.dto.user.UsersDto;
 import web.model.entity.BaseTime;
 import web.model.entity.common.UserRole;
+import web.model.entity.promise.PromEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,27 +40,39 @@ public class UsersEntity extends BaseTime {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private UserRole role = UserRole.ROLE_USER;                          // 사용자권한
+    private UserRole role = UserRole.ROLE_USER;                             // 사용자권한 , default ROLE_USER
 
     // 2. 양방향연결
     // 상위 엔티티가 하위 엔티티 참조관계
     // 양방향 연결: 내가 요청한 친구 관계
-    @OneToMany(mappedBy = "offerUser", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "offerUser", fetch = FetchType.LAZY )
     @ToString.Exclude
     @Builder.Default
     private List<FrenEntity> sentFriendRequests = new ArrayList<>();
 
     // 양방향 연결: 내가 받은 친구 관계
-    @OneToMany(mappedBy = "receiverUser", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "receiverUser", fetch = FetchType.LAZY )
     @ToString.Exclude
     @Builder.Default
     private List<FrenEntity> receivedFriendRequests = new ArrayList<>();
 
     // 양방향 연결: 출석
-    @OneToMany(mappedBy = "usersEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usersEntity", fetch = FetchType.LAZY )
     @ToString.Exclude
     @Builder.Default
     private List<AtenEntity> atenEntityList = new ArrayList<>();
+    
+    // 양방향 연결: 설정
+    @OneToMany(mappedBy = "usersEntity" , fetch = FetchType.LAZY )
+    @ToString.Exclude
+    @Builder.Default
+    private List<SetEntity> setEntityList = new ArrayList<>();
+
+    // 양방향 연결: 약속
+    @OneToMany(mappedBy = "usersEntity" , fetch = FetchType.LAZY )
+    @ToString.Exclude
+    @Builder.Default
+    private List<PromEntity> promEntityList = new ArrayList<>();
 
     // 3. Entity -> Dto 변환 : R
     public UsersDto toDto () {
@@ -75,6 +88,7 @@ public class UsersEntity extends BaseTime {
                 .signup_type( this.signup_type )
                 .create_date( this.getCreate_date().toString() )
                 .update_date( this.getUpdate_date().toString() )
+                .role( this.role )
                 .build();
     }
 

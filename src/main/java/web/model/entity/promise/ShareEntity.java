@@ -1,5 +1,17 @@
 package web.model.entity.promise;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table( name = "share" )
+@Data @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShareEntity {
 
     // 1. 테이블 설계

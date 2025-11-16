@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import web.model.entity.common.UserRole;
 import web.model.entity.user.UsersEntity;
 
 @Data @Builder
@@ -23,6 +24,7 @@ public class UsersDto {
     private int signup_type;    // 가입방법
     private String create_date; // 생성일
     private String update_date; // 수정일
+    private UserRole role;      // 권한
 
     // 2. Dto -> Entity 변환 : C
     public UsersEntity toEntity() {
@@ -36,6 +38,7 @@ public class UsersDto {
                 .addr_detail(addr_detail)
                 .user_state(user_state)
                 .signup_type(signup_type)
+                .role( role )
                 .build();
     }
 
