@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 public class LambDto {
 
     // 1. 테이블 설계
+    private int lamb_id;        // 양번호
+    private String lamb_name;   // 양품종
+
+
+    private int char_id;        // 양 특성 (FK)
 
     // 2. Dto -> Entity 변환 : C
 }

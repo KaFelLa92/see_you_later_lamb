@@ -26,7 +26,10 @@ public class EvalDto {
     // 2. Dto -> Entity 변환 : C
     public EvalEntity toEntity(UsersEntity usersEntity , TempEntity tempEntity, ShareEntity shareEntity) {
         return EvalEntity.builder()
-
+                .eval_id(eval_id)
+                .usersEntity(usersEntity)
+                .tempEntity(tempEntity)
+                .shareEntity(shareEntity)
                 .build();
     }
 
