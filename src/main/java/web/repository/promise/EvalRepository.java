@@ -9,6 +9,7 @@ import web.model.entity.promise.EvalEntity;
 public interface EvalRepository extends JpaRepository<EvalEntity, Integer> {
 
     //  PM-07	약속 공유	share_prom()
+
     //  PM-08	약속 평가	eval_prom()
 
 

@@ -1,23 +1,18 @@
-package web.service;
+package web.controller;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import web.repository.lamb.LambCharRepository;
-import web.repository.lamb.LambRepository;
-import web.repository.lamb.ProbRepository;
-import web.repository.lamb.ShepRepository;
+import web.service.LambService;
 
-@Service
+@RestController
+@RequestMapping("seeyoulaterlamb/lamb")
 @RequiredArgsConstructor
-@Transactional
-public class LambService {
+public class LambController {
     // [*] DI
-    private final LambRepository lambRepository;
-    private final LambCharRepository lambCharRepository;
-    private final ProbRepository probRepository;
-    private final ShepRepository shepRepository;
+    private final LambService lambService;
+
 
     //  AL-01	양 등록(관)	create_lamb()	관리자가 새로운 양을 등록한다.
 

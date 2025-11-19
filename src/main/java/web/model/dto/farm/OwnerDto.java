@@ -21,8 +21,8 @@ public class OwnerDto {
     private String owner_name;              // 목장별명
     private int farm_id;                    // 목장번호 (FK)
     private int user_id;                    // 사용자번호 (FK)
-    private LocalDateTime create_date;             // 생성일
-    private LocalDateTime update_date;             // 수정일
+    private String create_date;             // 생성일
+    private String update_date;             // 수정일
 
     // 2. Dto -> Entity 변환 : C
     public OwnerEntity toEntity(FarmEntity farmEntity, UsersEntity usersEntity) {
