@@ -9,6 +9,8 @@ import web.model.entity.common.TrafficType;
 import web.model.entity.user.SetEntity;
 import web.model.entity.user.UsersEntity;
 
+///  사용자 개인설정을 관리하는 DTO
+
 @Data
 @Builder
 @AllArgsConstructor

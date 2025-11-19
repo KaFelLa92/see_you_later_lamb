@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import web.model.entity.lamb.LambCharEntity;
 
 @Data
 @Builder
@@ -22,5 +23,15 @@ public class LambCharDto {
     private String update_date;         // 수정일
 
     // 2. Dto -> Entity 변환 : C
+    public LambCharEntity toEntity() {
+        return LambCharEntity.builder()
+                .char_id(char_id)
+                .char_name(char_name)
+                .char_desc(char_desc)
+                .effect_type(effect_type)
+                .effect_value(effect_value)
+                .is_active(is_active)
+                .build();
+    }
 
 }

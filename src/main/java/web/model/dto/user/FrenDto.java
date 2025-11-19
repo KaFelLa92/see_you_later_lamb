@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import web.model.entity.user.FrenEntity;
 import web.model.entity.user.UsersEntity;
 

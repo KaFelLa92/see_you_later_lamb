@@ -18,6 +18,7 @@ public class LambDto {
     private String lamb_name;   // 양품종 ex : 풍성해양 , 겁없어양 , 배고파양 , 전기양 , 콜리닮았어양
     private String lamb_info;   // 양소개
     private LambRank lamb_rank; // 양등급 1 : 일반 , 2 : 희귀 , 3 : 특급 , 4 : 전설
+    private String lamb_path;   // 양일러스트경로 (파일명도 포함)
     private int char_id;        // 양 특성번호 (FK)
     private String create_date; // 생성일
     private String update_date; // 수정일
@@ -29,6 +30,7 @@ public class LambDto {
                 .lamb_name(lamb_name)
                 .lamb_info(lamb_info)
                 .lamb_rank(lamb_rank)
+                .lamb_path(lamb_path)
                 .lambCharEntity(lambCharEntity)
                 .build();
     }

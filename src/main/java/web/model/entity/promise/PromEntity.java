@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+///  포인트 적립 공식을 사용자와 이어주는 DTO
+
 @Entity
 @Table( name = "promise" )
 @Data @Builder

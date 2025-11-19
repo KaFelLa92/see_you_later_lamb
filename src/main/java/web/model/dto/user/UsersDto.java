@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import web.model.entity.common.UserRole;
 import web.model.entity.user.UsersEntity;
 
+///  회원가입 , 로그인 등을 관리하는 DTO
+
 @Data @Builder
 @AllArgsConstructor
 @NoArgsConstructor

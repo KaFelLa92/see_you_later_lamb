@@ -29,6 +29,7 @@ public class LambEntity extends BaseTime {
     @Column( nullable = false )
     @Builder.Default
     private LambRank lamb_rank = LambRank.COMMON;   // 양등급 1 : 일반 , 2 : 희귀 , 3 : 특급 , 4 : 전설
+    private String lamb_path;                       // 양일러스트경로
 
     // 2. 양방향연결
     // 상위 엔티티가 하위 엔티티 참조관계
@@ -51,6 +52,7 @@ public class LambEntity extends BaseTime {
                 .lamb_name( this.lamb_name )
                 .lamb_info( this.lamb_info )
                 .lamb_rank( this.lamb_rank )
+                .lamb_path( this.lamb_path )
                 .char_id( this.lambCharEntity.getChar_id())
                 .create_date( this.getCreate_date().toString() )
                 .update_date( this.getUpdate_date().toString() )

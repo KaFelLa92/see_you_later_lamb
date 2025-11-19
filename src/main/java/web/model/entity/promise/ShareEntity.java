@@ -26,7 +26,7 @@ public class ShareEntity extends BaseTime {
     @Builder.Default
     private int share_score = 3;                            // 약속점수  1~5점. 5점일수록 좋음 (디폴트3)
     @Builder.Default
-    private String shere_feedback = "약속 지켜줘서 고마워양!";  // 약속피드백
+    private String share_feedback = "약속 지켜줘서 고마워양!";  // 약속피드백
 
     // 2. 양방향연결
     // 상위 엔티티가 하위 엔티티 참조관계
@@ -48,7 +48,7 @@ public class ShareEntity extends BaseTime {
                 .share_id( this.share_id )
                 .share_check( this.share_check )
                 .share_score( this.share_score )
-                .shere_feedback( this.shere_feedback )
+                .share_feedback( this.share_feedback )
                 .prom_id( this.promEntity.getProm_id() )
                 .create_date( this.getCreate_date().toString() )
                 .update_date( this.getUpdate_date().toString() )

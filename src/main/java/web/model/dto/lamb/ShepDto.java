@@ -30,8 +30,13 @@ public class ShepDto {
     // 2. Dto -> Entity 변환 : C
     public ShepEntity toEntity(LambEntity lambEntity, UsersEntity usersEntity) {
         return ShepEntity.builder()
-
-
+                .shep_id(shep_id)
+                .shep_name(shep_name)
+                .shep_hunger(shep_hunger)
+                .shep_fur(shep_fur)
+                .shep_exist(shep_exist)
+                .lambEntity(lambEntity)
+                .usersEntity(usersEntity)
                 .build();
     }
 }

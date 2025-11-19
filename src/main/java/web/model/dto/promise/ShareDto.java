@@ -17,7 +17,7 @@ public class ShareDto {
     private int share_id;                   // 약속공유번호 (PK)
     private int share_check;                // 약속확인 -1 : 약속 어김 , 0 : 약속 이행 , 1 : 약속 잘 지킴
     private int share_score;                // 약속점수  1~5점. 5점일수록 좋음
-    private String shere_feedback;          // 약속피드백
+    private String share_feedback;          // 약속피드백
     private int prom_id;                    // 약속번호 (FK)
     private String create_date;             // 생성일
     private String update_date;             // 수정일
@@ -28,7 +28,7 @@ public class ShareDto {
                 .share_id(share_id)
                 .share_check(share_check)
                 .share_score(share_score)
-                .shere_feedback(shere_feedback)
+                .share_feedback(share_feedback)
                 .promEntity(promEntity)
                 .build();
     }

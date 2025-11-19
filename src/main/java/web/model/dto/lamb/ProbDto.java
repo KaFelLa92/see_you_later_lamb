@@ -25,7 +25,11 @@ public class ProbDto {
     // 2. Dto -> Entity 변환 : C
     public ProbEntity toEntity(ShareEntity shareEntity) {
         return ProbEntity.builder()
-
+                .prob_id(prob_id)
+                .prob_lamb(prob_lamb)
+                .prob_wolf(prob_wolf)
+                .prob_rare(prob_rare)
+                .shareEntity(shareEntity)
                 .build();
     }
 }
