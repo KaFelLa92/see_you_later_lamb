@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+import web.model.dto.user.UsersDto;
+import web.model.entity.user.UsersEntity;
 import web.repository.user.AtenRepository;
 import web.repository.user.FrenRepository;
 import web.repository.user.SetRepository;
@@ -20,8 +24,24 @@ public class UserService {
     private final SetRepository setRepository;
 
     //  US-01	회원가입	sign_up()
+    public UsersDto sign_up(UsersDto usersDto) {
+        UsersEntity entity = usersDto.toEntity();
+        UsersEntity usersEntity = usersRepository.save(entity);
+        if (usersEntity.getUser_id() >= 0) {
+            return usersEntity.toDto();
+        }
+        return usersDto;
+    }
 
     //  US-02	로그인	login()
+    public UsersDto login(UsersDto usersDto) {
+        Optional<UsersEntity> optional = usersRepository.findByEmail(usersDto.getEmail());
+        if (optional.isPresent()) {
+            UsersEntity usersEntity = optional.get();
+            return usersEntity.toDto();
+        }
+        return null;
+    }
 
     //  US-03	로그아웃	log_out()
 

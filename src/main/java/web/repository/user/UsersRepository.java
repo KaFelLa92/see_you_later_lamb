@@ -2,6 +2,7 @@ package web.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import web.model.entity.user.UsersEntity;
 
 @Repository
@@ -10,6 +11,7 @@ public interface UsersRepository extends JpaRepository<UsersEntity , Integer> {
     //  US-01	회원가입	sign_up()
 
     //  US-02	로그인	login()
+    UsersEntity findByEmail(String email);
 
     //  US-03	로그아웃	log_out()
 
