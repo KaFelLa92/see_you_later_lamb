@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import web.model.entity.promise.PromEntity;
 import web.model.entity.promise.ShareEntity;
+import web.model.entity.promise.TempEntity;
+import web.model.entity.user.UsersEntity;
 
 @Data @Builder
 @NoArgsConstructor
@@ -19,11 +21,13 @@ public class ShareDto {
     private int share_score;                // 약속점수  1~5점. 5점일수록 좋음
     private String share_feedback;          // 약속피드백
     private int prom_id;                    // 약속번호 (FK)
+    private int user_id;                    // 사용자번호 (FK) - 평가자 식별용
+    private int temp_id;                    // 임시사용자번호(FK) - 평가자 식별용
     private String create_date;             // 생성일
     private String update_date;             // 수정일
 
     // 2. Dto -> Entity 변환 : C
-    public ShareEntity toEntity(PromEntity promEntity) {
+    public ShareEntity toEntity(PromEntity promEntity, UsersEntity usersEntity, TempEntity tempEntity) {
         return ShareEntity.builder()
                 .share_id(share_id)
                 .share_token(share_token)
@@ -31,6 +35,7 @@ public class ShareDto {
                 .share_score(share_score)
                 .share_feedback(share_feedback)
                 .promEntity(promEntity)
+                .usersEntity(usersEntity)
                 .build();
     }
 

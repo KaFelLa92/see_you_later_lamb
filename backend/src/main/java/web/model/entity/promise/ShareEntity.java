@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import web.model.dto.promise.ShareDto;
 import web.model.entity.BaseTime;
+import web.model.entity.user.UsersEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,14 @@ public class ShareEntity extends BaseTime {
     @JoinColumn( name = "prom_id" )
     private PromEntity promEntity;
 
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "user_id" )
+    private UsersEntity usersEntity;
+
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "temp_id" )
+    private TempEntity tempEntity;
+
     // 4. Entity 생성 시 토큰 자동 생성
     @PrePersist
     public void generateToken() {
@@ -63,6 +72,7 @@ public class ShareEntity extends BaseTime {
                 .share_score( this.share_score )
                 .share_feedback( this.share_feedback )
                 .prom_id( this.promEntity.getProm_id() )
+                .user_id( this.usersEntity.getUser_id())
                 .create_date( this.getCreate_date().toString() )
                 .update_date( this.getUpdate_date().toString() )
                 .build();

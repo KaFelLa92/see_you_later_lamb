@@ -521,12 +521,12 @@ public class PromService {
 
     /**
      * PM-08 약속 평가
-     * @param evalDto 평가 정보
+     * @param shareDto 평가 정보가 담긴 DTO
      * @param shareId 공유 ID
      * @param isTemp 임시 사용자 여부
      * @return 평가 결과
      */
-    public Map<String, Object> evalProm(EvalDto evalDto, int shareId, boolean isTemp) {
+    public Map<String, Object> evalProm(ShareDto shareDto, int shareId, boolean isTemp) {
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -562,7 +562,7 @@ public class PromService {
 
             // 4-1. 회원 사용자 평가
             if (!isTemp) {
-                Optional<UsersEntity> userOpt = usersRepository.findById(evalDto.getUser_id());
+                Optional<UsersEntity> userOpt = usersRepository.findById(shareDto.getUser_id());
 
                 if (userOpt.isEmpty()) {
                     result.put("success", false);
@@ -590,8 +590,8 @@ public class PromService {
                 // 임시 사용자 생성 또는 조회
                 TempEntity temp;
 
-                if (evalDto.getTemp_id() > 0) {
-                    temp = tempRepository.findById(evalDto.getTemp_id()).orElse(null);
+                if (shareDto.getTemp_id() > 0) {
+                    temp = tempRepository.findById(shareDto.getTemp_id()).orElse(null);
                 } else {
                     // 새로운 임시 사용자 생성
                     temp = TempEntity.builder().build();
@@ -614,11 +614,11 @@ public class PromService {
             EvalEntity savedEval = evalRepository.save(eval);
 
             // 6. Share 테이블의 평가 정보 업데이트
-            share.setShare_check(evalDto.getShare_check() != 0 ? evalDto.getShare_check() : 0);
-            share.setShare_score(evalDto.getShare_score() > 0 ? evalDto.getShare_score() : 3);
+            share.setShare_check(shareDto.getShare_check() != 0 ? shareDto.getShare_check() : 0);
+            share.setShare_score(shareDto.getShare_score() > 0 ? shareDto.getShare_score() : 3);
 
-            if (evalDto.getShare_feedback() != null) {
-                share.setShare_feedback(evalDto.getShare_feedback());
+            if (shareDto.getShare_feedback() != null) {
+                share.setShare_feedback(shareDto.getShare_feedback());
             }
 
             shareRepository.save(share);
