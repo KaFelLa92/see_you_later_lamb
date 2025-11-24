@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="엔드포인트 분리" />
+    <list default="true" id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="프롬서비스와 쉐어 , 이발 엔티티/dto 실효성 확인 필요" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,35 +30,35 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "KaFelLa92"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;KaFelLa92&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/kafella92/see_you_later_lamb.git",
-    "accountId": "a5ee0051-2e60-422e-8806-c97e98ddca3f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/kafella92/see_you_later_lamb.git&quot;,
+    &quot;accountId&quot;: &quot;a5ee0051-2e60-422e-8806-c97e98ddca3f&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="35vdc53X39zlLtfPoNpFHq8KdlC" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "dongjin"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dongjin&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
       <changelist id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="" />
@@ -75,7 +75,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763994895105</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="프롬서비스와 쉐어 , 이발 엔티티/dto 실효성 확인 필요">
+      <option name="closed" value="true" />
+      <created>1763997547559</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763997547559</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -91,6 +99,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="엔드포인트 분리" />
-    <option name="LAST_COMMIT_MESSAGE" value="엔드포인트 분리" />
+    <MESSAGE value="프롬서비스와 쉐어 , 이발 엔티티/dto 실효성 확인 필요" />
+    <option name="LAST_COMMIT_MESSAGE" value="프롬서비스와 쉐어 , 이발 엔티티/dto 실효성 확인 필요" />
   </component>
 </project>
