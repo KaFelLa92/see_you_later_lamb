@@ -521,12 +521,12 @@ public class PromService {
 
     /**
      * PM-08 약속 평가
-     * @param shareDto 평가 정보가 담긴 DTO
+     * @param evalDto 평가 정보 (PromEvaluationDto 사용)
      * @param shareId 공유 ID
      * @param isTemp 임시 사용자 여부
      * @return 평가 결과
      */
-    public Map<String, Object> evalProm(ShareDto shareDto, int shareId, boolean isTemp) {
+    public Map<String, Object> evalProm(PromEvaluationDto evalDto, int shareId, boolean isTemp) {
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -561,8 +561,8 @@ public class PromService {
             EvalEntity eval;
 
             // 4-1. 회원 사용자 평가
-            if (!isTemp) {
-                Optional<UsersEntity> userOpt = usersRepository.findById(shareDto.getUser_id());
+            if (!isTemp && evalDto.getUser_id() != null) {
+                Optional<UsersEntity> userOpt = usersRepository.findById(evalDto.getUser_id());
 
                 if (userOpt.isEmpty()) {
                     result.put("success", false);
@@ -590,11 +590,19 @@ public class PromService {
                 // 임시 사용자 생성 또는 조회
                 TempEntity temp;
 
-                if (shareDto.getTemp_id() > 0) {
-                    temp = tempRepository.findById(shareDto.getTemp_id()).orElse(null);
+                if (evalDto.getTemp_id() != null && evalDto.getTemp_id() > 0) {
+                    // 기존 임시 사용자
+                    temp = tempRepository.findById(evalDto.getTemp_id()).orElse(null);
                 } else {
                     // 새로운 임시 사용자 생성
-                    temp = TempEntity.builder().build();
+                    TempEntity.TempEntityBuilder tempBuilder = TempEntity.builder();
+
+                    // 임시 사용자 이름이 제공되면 설정
+                    if (evalDto.getTemp_name() != null && !evalDto.getTemp_name().isEmpty()) {
+                        tempBuilder.temp_name(evalDto.getTemp_name());
+                    }
+
+                    temp = tempBuilder.build();
                     temp = tempRepository.save(temp);
                 }
 
@@ -614,11 +622,12 @@ public class PromService {
             EvalEntity savedEval = evalRepository.save(eval);
 
             // 6. Share 테이블의 평가 정보 업데이트
-            share.setShare_check(shareDto.getShare_check() != 0 ? shareDto.getShare_check() : 0);
-            share.setShare_score(shareDto.getShare_score() > 0 ? shareDto.getShare_score() : 3);
+            // evalDto에서 평가 정보 가져오기
+            share.setShare_check(evalDto.getShare_check());
+            share.setShare_score(evalDto.getShare_score() > 0 ? evalDto.getShare_score() : 3);
 
-            if (shareDto.getShare_feedback() != null) {
-                share.setShare_feedback(shareDto.getShare_feedback());
+            if (evalDto.getShare_feedback() != null && !evalDto.getShare_feedback().isEmpty()) {
+                share.setShare_feedback(evalDto.getShare_feedback());
             }
 
             shareRepository.save(share);
@@ -626,6 +635,7 @@ public class PromService {
             result.put("success", true);
             result.put("message", "평가가 완료되었습니다.");
             result.put("eval", savedEval.toDto());
+            result.put("share", share.toDto());
 
             // 7. 임시 사용자인 경우 회원가입 제안
             if (isTemp) {

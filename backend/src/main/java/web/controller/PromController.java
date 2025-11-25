@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import web.model.dto.promise.CalendDto;
-import web.model.dto.promise.EvalDto;
 import web.model.dto.promise.PromDto;
+import web.model.dto.promise.PromEvaluationDto;
 import web.service.PromService;
 
 import java.time.LocalDateTime;
@@ -265,7 +265,7 @@ public class PromController {
     @PostMapping("/share/{shareId}/eval")
     public ResponseEntity<Map<String, Object>> evaluatePromise(
             @PathVariable int shareId,
-            @RequestBody EvalDto evalDto) {
+            @RequestBody PromEvaluationDto evalDto) {
 
         Map<String, Object> result = promService.evalProm(evalDto, shareId, false);
 
@@ -282,6 +282,7 @@ public class PromController {
      *
      * Request Body:
      * {
+     *   "temp_name": "익명의 양치기",
      *   "share_check": 1,
      *   "share_score": 5,
      *   "share_feedback": "좋았어요!"
@@ -290,7 +291,7 @@ public class PromController {
     @PostMapping("/share/{shareId}/eval/temp")
     public ResponseEntity<Map<String, Object>> evaluatePromiseByTemp(
             @PathVariable int shareId,
-            @RequestBody EvalDto evalDto) {
+            @RequestBody PromEvaluationDto evalDto) {
 
         Map<String, Object> result = promService.evalProm(evalDto, shareId, true);
 

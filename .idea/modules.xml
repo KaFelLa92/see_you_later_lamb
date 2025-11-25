@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/see_you_later_lamb.iml" filepath="$PROJECT_DIR$/.idea/see_you_later_lamb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/see_you_later_lamb.iml" filepath="$PROJECT_DIR$/.idea/modules/see_you_later_lamb.iml" />
     </modules>
   </component>
 </project>
