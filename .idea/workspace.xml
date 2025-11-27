@@ -4,18 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="백로직 세팅 끝">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/dto/promise/PromEvaluationDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/see_you_later_lamb.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/controller/PromController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/controller/PromController.java" afterDir="false" />
+    <list default="true" id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="프롬서비스와 쉐어 , 이발 엔티티/dto 실효성 확인 필요">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/25__11__25___9_30__________.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/dto/promise/ShareDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/dto/promise/ShareDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/service/PromService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/service/PromService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/BaseTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/BaseTime.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/farm/FarmEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/farm/FarmEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/promise/PromEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/promise/PromEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/promise/ShareEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/promise/ShareEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/AtenEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/AtenEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/FrenEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/FrenEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/SetEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/SetEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/UsersEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/web/model/entity/user/UsersEntity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,9 +85,39 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "dongjin"
+    "git-widget-placeholder": "dongjin",
+    "last_opened_file_path": "C:/Users/NT371B5L/Desktop/cording/see_you_later_lamb",
+    "settings.editor.selected.configurable": "File.Encoding",
+    "애플리케이션.AppStart.executor": "Run"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="Application" factoryName="Application">
+      <shortenClasspath name="ARGS_FILE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AppStart" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="web.AppStart" />
+      <module name="com.example.see_you_later_lamb.main" />
+      <shortenClasspath name="ARGS_FILE" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="web.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="애플리케이션.AppStart" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
       <changelist id="3df83f9c-1a49-432a-8af3-ac0e0f6444ff" name="변경" comment="" />
