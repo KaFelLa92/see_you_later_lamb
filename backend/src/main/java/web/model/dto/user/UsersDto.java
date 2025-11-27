@@ -7,41 +7,64 @@ import lombok.NoArgsConstructor;
 import web.model.entity.common.UserRole;
 import web.model.entity.user.UsersEntity;
 
-///  회원가입 , 로그인 등을 관리하는 DTO
-
-@Data @Builder
+/**
+ * 사용자(Users) DTO
+ * 회원가입, 로그인 등 사용자 정보를 전달하기 위한 데이터 전송 객체
+ */
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsersDto {
 
-    // 1. 테이블 설계
-    private int user_id;        // 사용자번호 (PK)
+    // ========== 1. 필드 설계 ==========
+
+    private int userId;        // 사용자번호 (PK)
     private String email;       // 이메일
     private String password;    // 비밀번호
-    private String user_name;   // 양치기이름
+    private String userName;   // 양치기 이름(닉네임)
     private String phone;       // 연락처
-    private String addr;        // 도로명주소
-    private String addr_detail; // 상세주소
-    private int user_state;     // 사용자상태
-    private int signup_type;    // 가입방법
-    private String create_date; // 생성일
-    private String update_date; // 수정일
+    private String addr;        // 도로명 주소
+    private String addrDetail; // 상세 주소
+
+    /**
+     * 사용자 상태
+     * -1: 삭제 계정
+     * 0: 휴면 계정
+     * 1: 활동 계정
+     */
+    private int userState;     // 사용자 상태
+
+    /**
+     * 가입 방법
+     * 1: 일반
+     * 2: 구글
+     * 3: 카카오
+     * 4: 네이버
+     */
+    private int signupType;    // 가입 방법
+
+    private String createDate; // 생성일
+    private String updateDate; // 수정일
     private UserRole role;      // 권한
 
-    // 2. Dto -> Entity 변환 : C
+    // ========== 2. Dto -> Entity 변환 메서드 ==========
+    /**
+     * DTO를 엔티티로 변환하는 메서드 (생성용)
+     * @return UsersEntity 사용자 엔티티
+     */
     public UsersEntity toEntity() {
         return UsersEntity.builder()
-                .user_id(user_id)
+                .userId(userId)
                 .email(email)
                 .password(password)
-                .user_name(user_name)
+                .userName(userName)
                 .phone(phone)
                 .addr(addr)
-                .addr_detail(addr_detail)
-                .user_state(user_state)
-                .signup_type(signup_type)
-                .role( role )
+                .addrDetail(addrDetail)
+                .userState(userState)
+                .signupType(signupType)
+                .role(role)
                 .build();
     }
-
 }

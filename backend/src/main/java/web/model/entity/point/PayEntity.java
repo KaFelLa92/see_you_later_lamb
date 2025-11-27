@@ -13,63 +13,94 @@ import web.model.entity.promise.ShareEntity;
 import web.model.entity.user.AtenEntity;
 import web.model.entity.user.UsersEntity;
 
-///  포인트 적립 공식을 사용자와 이어주는 엔티티
-
+/**
+ * 포인트 지급(Point Pay) 엔티티
+ * 포인트 적립 공식을 사용자와 연결하는 엔티티 클래스
+ * 출석, 약속 이행, 목장 업무, 목장 구매 등 다양한 활동에 대한 포인트 지급 내역 관리
+ */
 @Entity
-@Table( name = "pointPay" )
+@Table(name = "pointPay")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PayEntity extends BaseTime {
 
-    // 1. 테이블 설계
-    @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
-    private int pay_id;                     // 포인트지급번호 (PK)
+    // ========== 1. 테이블 필드 설계 ==========
 
-    // 2. 양방향연결
-    // 상위 엔티티가 하위 엔티티 참조관계
+    @Id // 기본키(Primary Key) 지정
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto Increment 설정
+    private int payId;                     // 포인트지급번호 (PK)
 
-    // 3. 단방향연결
-    // 하위 엔티티가 상위 엔티티 참조 관계
-    // 단방향연결 : 출석 (출석 시 포인트 지급)
-    @ManyToOne( fetch = FetchType.LAZY ) // 캐스케이드 있으면 같이 삭제될 수 있음
-    @JoinColumn( nullable = true , name = "aten_id" ) // FK 필드명 (PK 필드명과 동일하게)
+    // ========== 2. 양방향 연결 ==========
+    // 상위 엔티티가 하위 엔티티를 참조하는 관계
+    // (현재 없음)
+
+    // ========== 3. 단방향 연결 ==========
+    // 하위 엔티티가 상위 엔티티를 참조하는 관계
+
+    /**
+     * 출석(Attendance) 엔티티와의 다대일(N:1) 관계
+     * - 출석 시 포인트 지급
+     * - nullable = true: 출석으로 인한 지급이 아닐 수 있음
+     * - FetchType.LAZY: 지연 로딩 설정
+     * - cascade 없음: 출석 삭제 시 포인트 지급 내역은 유지
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "aten_id") // 외래키(FK) 컬럼명
     private AtenEntity atenEntity;
 
-    // 단방향연결 : 약속공유 (약속 잘 수행 시 포인트 지급)
-    @ManyToOne( fetch = FetchType.LAZY ) // 캐스케이드 있으면 같이 삭제될 수 있음
-    @JoinColumn( nullable = true , name = "share_id" ) // FK 필드명 (PK 필드명과 동일하게)
+    /**
+     * 약속공유(Share) 엔티티와의 다대일(N:1) 관계
+     * - 약속을 잘 수행했을 때 포인트 지급
+     * - nullable = true: 약속 공유로 인한 지급이 아닐 수 있음
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "share_id")
     private ShareEntity shareEntity;
 
-    // 단방향연결 : 목장업무 (업무 수행시 포인트 지급)
-    @ManyToOne( fetch = FetchType.LAZY ) // 캐스케이드 있으면 같이 삭제될 수 있음
-    @JoinColumn( nullable = true , name = "work_id" ) // FK 필드명 (PK 필드명과 동일하게)
+    /**
+     * 목장업무(Work) 엔티티와의 다대일(N:1) 관계
+     * - 목장 업무 수행 시 포인트 지급
+     * - nullable = true: 업무로 인한 지급이 아닐 수 있음
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "work_id")
     private WorkEntity workEntity;
 
-    // 단방향연결 : 목장 (목장 구매 관련)
-    @ManyToOne( fetch = FetchType.LAZY ) // 캐스케이드 있으면 같이 삭제될 수 있음
-    @JoinColumn( nullable = true , name = "farm_id" ) // FK 필드명 (PK 필드명과 동일하게)
+    /**
+     * 목장(Farm) 엔티티와의 다대일(N:1) 관계
+     * - 목장 구매 관련 포인트 처리
+     * - nullable = true: 목장 구매로 인한 지급이 아닐 수 있음
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "farm_id")
     private FarmEntity farmEntity;
 
-    // 단방향연결 : 포인트정책
-    @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( nullable = true , name = "point_id" )
+    /**
+     * 포인트정책(Point Policy) 엔티티와의 다대일(N:1) 관계
+     * - 어떤 포인트 정책에 따라 지급되었는지 연결
+     * - nullable = true: 특정 정책 없이 지급될 수 있음
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "point_id")
     private PointEntity pointEntity;
 
-    // 4. Entity -> Dto 변환 : R
-
-    public PayDto toDto () {
+    // ========== 4. Entity -> Dto 변환 메서드 ==========
+    /**
+     * 엔티티를 DTO로 변환하는 메서드
+     * @return PayDto 포인트 지급 데이터 전송 객체
+     */
+    public PayDto toDto() {
         return PayDto.builder()
-                .pay_id( this.pay_id )
-                .aten_id( this.atenEntity.getAten_id() )
-                .share_id( this.shareEntity.getShare_id() )
-                .work_id( this.workEntity.getWork_id() )
-                .farm_id( this.farmEntity.getFarm_id() )
-                .point_id( this.pointEntity.getPoint_id() )
-                .create_date( this.getCreate_date().toString() )
-                .update_date( this.getUpdate_date().toString() )
+                .payId(this.payId)
+                .atenId(this.atenEntity.getAtenId())
+                .shareId(this.shareEntity.getShareId())
+                .workId(this.workEntity.getWorkId())
+                .farmId(this.farmEntity.getFarmId())
+                .pointId(this.pointEntity.getPointId())
+                .createDate(this.getCreateDate().toString())
+                .updateDate(this.getUpdateDate().toString())
                 .build();
     }
 }

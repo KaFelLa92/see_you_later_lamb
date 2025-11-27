@@ -63,13 +63,13 @@ public class PromService {
             UsersEntity user = userOpt.get();
 
             // 2. 약속 주소가 있으면 좌표 변환
-            if (promDto.getProm_addr() != null && !promDto.getProm_addr().isEmpty()) {
+            if (promDto.getPromAddr() != null && !promDto.getPromAddr().isEmpty()) {
                 Map<String, Double> coordinates =
-                        kakaoMapService.getCoordinatesFromAddress(promDto.getProm_addr());
+                        kakaoMapService.getCoordinatesFromAddress(promDto.getPromAddr());
 
                 if (coordinates != null) {
-                    promDto.setProm_lat(coordinates.get("lat"));
-                    promDto.setProm_lng(coordinates.get("lng"));
+                    promDto.setPromLat(coordinates.get("lat"));
+                    promDto.setPromLng(coordinates.get("lng"));
                 }
             }
 
@@ -82,7 +82,7 @@ public class PromService {
             result.put("promise", savedProm.toDto());
 
             // 4. 사용자 집 주소와 약속 장소가 모두 있으면 거리/시간 계산
-            if (user.getAddr() != null && promDto.getProm_addr() != null) {
+            if (user.getAddr() != null && promDto.getPromAddr() != null) {
                 Map<String, Object> routeInfo = calculateRoute(user, savedProm);
 
                 if (routeInfo != null) {
@@ -111,14 +111,14 @@ public class PromService {
             Map<String, Double> homeCoords =
                     kakaoMapService.getCoordinatesFromAddress(user.getAddr());
 
-            if (homeCoords == null || prom.getProm_lat() == null || prom.getProm_lng() == null) {
+            if (homeCoords == null || prom.getPromLat() == null || prom.getPromLng() == null) {
                 return null;
             }
 
             double homeLat = homeCoords.get("lat");
             double homeLng = homeCoords.get("lng");
-            double promLat = prom.getProm_lat();
-            double promLng = prom.getProm_lng();
+            double promLat = prom.getPromLat();
+            double promLng = prom.getPromLng();
 
             // 2. 거리 계산
             double distance = kakaoMapService.calculateDistance(
@@ -161,7 +161,7 @@ public class PromService {
 
         try {
             // 1. 약속 조회
-            Optional<PromEntity> promOpt = promRepository.findById(promDto.getProm_id());
+            Optional<PromEntity> promOpt = promRepository.findById(promDto.getPromId());
 
             if (promOpt.isEmpty()) {
                 result.put("success", false);
@@ -172,17 +172,17 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인 (약속 생성자만 수정 가능)
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "약속을 수정할 권한이 없습니다.");
                 return result;
             }
 
             // 3. 수정 가능한 필드 업데이트
-            if (promDto.getProm_title() != null) {
-                prom.setProm_title(promDto.getProm_title());
+            if (promDto.getPromTitle() != null) {
+                prom.setPromTitle(promDto.getPromTitle());
             }
-            if (promDto.getProm_date() != null) {
+            if (promDto.getPromDate() != null) {
                 prom.setProm_date(promDto.getProm_date());
             }
             if (promDto.getProm_alert() >= 0) {

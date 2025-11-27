@@ -60,13 +60,13 @@ public class AuthService {
         }
 
         // 3. 계정 상태 확인
-        if (user.getUser_state() == -1) {
+        if (user.getUserState() == -1) {
             result.put("success", false);
             result.put("message", "탈퇴한 계정입니다.");
             return result;
         }
 
-        if (user.getUser_state() == 0) {
+        if (user.getUserState() == 0) {
             result.put("success", false);
             result.put("message", "휴면 계정입니다. 계정 활성화가 필요합니다.");
             return result;
@@ -74,13 +74,13 @@ public class AuthService {
 
         // 4. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(
-                user.getUser_id(),
+                user.getUserId(),
                 user.getEmail(),
                 user.getRole().name()
         );
 
         String refreshToken = jwtUtil.generateRefreshToken(
-                user.getUser_id(),
+                user.getUserId(),
                 user.getEmail()
         );
 
@@ -136,7 +136,7 @@ public class AuthService {
         UsersEntity user = userOptional.get();
 
         // 5. 계정 상태 확인
-        if (user.getUser_state() != 1) {
+        if (user.getUserState() != 1) {
             result.put("success", false);
             result.put("message", "비활성 계정입니다.");
             return result;
@@ -144,7 +144,7 @@ public class AuthService {
 
         // 6. 새로운 Access Token 생성
         String newAccessToken = jwtUtil.generateAccessToken(
-                user.getUser_id(),
+                user.getUserId(),
                 user.getEmail(),
                 user.getRole().name()
         );
@@ -283,12 +283,12 @@ public class AuthService {
             user = UsersEntity.builder()
                     .email(email)
                     .password("")  // 소셜 로그인은 비밀번호 없음
-                    .user_name(userName)
+                    .userName(userName)
                     .phone("")  // 추가 정보는 나중에 입력
                     .addr("")
-                    .addr_detail("")
-                    .signup_type(signupType)
-                    .user_state(1)  // 활성 계정
+                    .addrDetail("")
+                    .signupType(signupType)
+                    .userState(1)  // 활성 계정
                     .build();
 
             user = usersRepository.save(user);
@@ -300,7 +300,7 @@ public class AuthService {
             user = userOptional.get();
 
             // 계정 상태 확인
-            if (user.getUser_state() != 1) {
+            if (user.getUserState() != 1) {
                 result.put("success", false);
                 result.put("message", "비활성 계정입니다.");
                 return result;
@@ -311,13 +311,13 @@ public class AuthService {
 
         // 3. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(
-                user.getUser_id(),
+                user.getUserId(),
                 user.getEmail(),
                 user.getRole().name()
         );
 
         String refreshToken = jwtUtil.generateRefreshToken(
-                user.getUser_id(),
+                user.getUserId(),
                 user.getEmail()
         );
 
