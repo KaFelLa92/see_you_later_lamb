@@ -1,11 +1,9 @@
 package web.service;
 
 import org.springframework.stereotype.Service;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import web.model.dto.promise.*;
-import web.model.entity.common.CycleType;
 import web.model.entity.promise.*;
 import web.model.entity.user.UsersEntity;
 import web.repository.promise.*;
@@ -22,20 +20,21 @@ import java.util.stream.Collectors;
  * - 반복 약속 관리
  */
 @Service
-@Transactional
-@RequiredArgsConstructor
+@Transactional  // 모든 메서드에 트랜잭션 적용
+@RequiredArgsConstructor  // final 필드 생성자 자동 생성
 public class PromService {
 
     // ============================================
-    // [*] DI (Dependency Injection)
+    // [*] DI (Dependency Injection) - 의존성 주입
     // ============================================
-    private final PromRepository promRepository;
-    private final ShareRepository shareRepository;
-    private final CalendRepository calendRepository;
-    private final EvalRepository evalRepository;
-    private final TempRepository tempRepository;
-    private final UsersRepository usersRepository;
-    private final KakaoMapService kakaoMapService;
+
+    private final PromRepository promRepository;        // 약속 Repository
+    private final ShareRepository shareRepository;      // 공유 Repository
+    private final CalendRepository calendRepository;    // 반복 약속 Repository
+    private final EvalRepository evalRepository;        // 평가 Repository
+    private final TempRepository tempRepository;        // 임시 사용자 Repository
+    private final UsersRepository usersRepository;      // 사용자 Repository
+    private final KakaoMapService kakaoMapService;      // 카카오맵 서비스
 
     // ============================================
     // [1] 약속 생성 (PM-01)
@@ -43,11 +42,18 @@ public class PromService {
 
     /**
      * PM-01 약속 생성
-     * @param promDto 약속 정보
+     * 새로운 약속을 생성하고 이동 경로 정보도 함께 제공
+     *
+     * @param promDto 약속 정보 DTO
      * @param userId 약속 생성 사용자 ID
-     * @return 생성된 약속 정보 + 이동 거리/시간 정보
+     * @return Map<String, Object> 생성 결과
+     *         - success: 성공 여부
+     *         - message: 결과 메시지
+     *         - promise: 생성된 약속 정보
+     *         - routeInfo: 이동 경로 정보 (선택적)
      */
     public Map<String, Object> createProm(PromDto promDto, int userId) {
+        // 결과를 담을 Map 생성
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -63,17 +69,20 @@ public class PromService {
             UsersEntity user = userOpt.get();
 
             // 2. 약속 주소가 있으면 좌표 변환
+            // 주소를 위도/경도로 변환하여 지도 표시 및 거리 계산에 사용
             if (promDto.getPromAddr() != null && !promDto.getPromAddr().isEmpty()) {
                 Map<String, Double> coordinates =
                         kakaoMapService.getCoordinatesFromAddress(promDto.getPromAddr());
 
                 if (coordinates != null) {
+                    // 변환된 좌표를 DTO에 설정
                     promDto.setPromLat(coordinates.get("lat"));
                     promDto.setPromLng(coordinates.get("lng"));
                 }
             }
 
             // 3. 약속 Entity 생성 및 저장
+            // DTO를 Entity로 변환
             PromEntity promEntity = promDto.toEntity(user);
             PromEntity savedProm = promRepository.save(promEntity);
 
@@ -82,6 +91,7 @@ public class PromService {
             result.put("promise", savedProm.toDto());
 
             // 4. 사용자 집 주소와 약속 장소가 모두 있으면 거리/시간 계산
+            // 사용자의 이동 시간과 거리를 미리 계산하여 제공
             if (user.getAddr() != null && promDto.getPromAddr() != null) {
                 Map<String, Object> routeInfo = calculateRoute(user, savedProm);
 
@@ -93,6 +103,7 @@ public class PromService {
             return result;
 
         } catch (Exception e) {
+            // 예외 발생 시 에러 메시지 반환
             result.put("success", false);
             result.put("message", "약속 생성 실패: " + e.getMessage());
             return result;
@@ -100,10 +111,11 @@ public class PromService {
     }
 
     /**
-     * 사용자 집에서 약속 장소까지의 경로 정보 계산
+     * 사용자 집에서 약속 장소까지의 경로 정보 계산 (Private Helper 메서드)
+     *
      * @param user 사용자
      * @param prom 약속
-     * @return 경로 정보 (거리, 시간, 추천 교통수단)
+     * @return Map<String, Object> 경로 정보 (거리, 시간, 추천 교통수단)
      */
     private Map<String, Object> calculateRoute(UsersEntity user, PromEntity prom) {
         try {
@@ -111,10 +123,12 @@ public class PromService {
             Map<String, Double> homeCoords =
                     kakaoMapService.getCoordinatesFromAddress(user.getAddr());
 
+            // 좌표 변환 실패 시 null 반환
             if (homeCoords == null || prom.getPromLat() == null || prom.getPromLng() == null) {
                 return null;
             }
 
+            // 좌표 추출
             double homeLat = homeCoords.get("lat");
             double homeLng = homeCoords.get("lng");
             double promLat = prom.getPromLat();
@@ -127,9 +141,11 @@ public class PromService {
 
             // 3. 사용자 설정에서 선호 교통수단 가져오기
             // (SetEntity에서 조회 필요 - 여기서는 기본값 사용)
+            // TODO: SetEntity에서 사용자의 선호 교통수단 조회
             String preferredTraffic = "SUBWAY_AND_BUS";
 
             // 4. 최적 교통수단 추천
+            // 거리와 선호도를 고려하여 가장 적합한 교통수단 추천
             String recommendedTraffic =
                     kakaoMapService.recommendTrafficType(distance, preferredTraffic);
 
@@ -141,6 +157,7 @@ public class PromService {
             return routeInfo;
 
         } catch (Exception e) {
+            // 경로 계산 실패 시 에러 로그만 출력하고 null 반환
             System.err.println("경로 계산 실패: " + e.getMessage());
             return null;
         }
@@ -152,9 +169,11 @@ public class PromService {
 
     /**
      * PM-02 약속 수정
+     * 약속 생성자만 수정 가능
+     *
      * @param promDto 수정할 약속 정보
      * @param userId 수정 요청 사용자 ID (권한 확인용)
-     * @return 수정 결과
+     * @return Map<String, Object> 수정 결과
      */
     public Map<String, Object> updateProm(PromDto promDto, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -179,35 +198,37 @@ public class PromService {
             }
 
             // 3. 수정 가능한 필드 업데이트
+            // null이 아닌 값만 업데이트 (부분 수정 지원)
             if (promDto.getPromTitle() != null) {
                 prom.setPromTitle(promDto.getPromTitle());
             }
             if (promDto.getPromDate() != null) {
-                prom.setProm_date(promDto.getProm_date());
+                prom.setPromDate(promDto.getPromDate());
             }
-            if (promDto.getProm_alert() >= 0) {
-                prom.setProm_alert(promDto.getProm_alert());
+            if (promDto.getPromAlert() >= 0) {
+                prom.setPromAlert(promDto.getPromAlert());
             }
-            if (promDto.getProm_addr() != null) {
-                prom.setProm_addr(promDto.getProm_addr());
+            if (promDto.getPromAddr() != null) {
+                prom.setPromAddr(promDto.getPromAddr());
 
                 // 주소 변경 시 좌표 재계산
                 Map<String, Double> coordinates =
-                        kakaoMapService.getCoordinatesFromAddress(promDto.getProm_addr());
+                        kakaoMapService.getCoordinatesFromAddress(promDto.getPromAddr());
 
                 if (coordinates != null) {
-                    prom.setProm_lat(coordinates.get("lat"));
-                    prom.setProm_lng(coordinates.get("lng"));
+                    prom.setPromLat(coordinates.get("lat"));
+                    prom.setPromLng(coordinates.get("lng"));
                 }
             }
-            if (promDto.getProm_addr_detail() != null) {
-                prom.setProm_addr_detail(promDto.getProm_addr_detail());
+            if (promDto.getPromAddrDetail() != null) {
+                prom.setPromAddrDetail(promDto.getPromAddrDetail());
             }
-            if (promDto.getProm_text() != null) {
-                prom.setProm_text(promDto.getProm_text());
+            if (promDto.getPromText() != null) {
+                prom.setPromText(promDto.getPromText());
             }
 
             // 4. 저장 (Dirty Checking으로 자동 UPDATE)
+            // @Transactional 환경에서는 엔티티 변경만으로도 자동 업데이트됨
             PromEntity updatedProm = promRepository.save(prom);
 
             result.put("success", true);
@@ -229,10 +250,12 @@ public class PromService {
 
     /**
      * PM-03 약속 메모 추가
+     * 기존 메모에 새 메모를 추가 (누적)
+     *
      * @param promId 약속 ID
      * @param memo 메모 내용
      * @param userId 사용자 ID
-     * @return 수정 결과
+     * @return Map<String, Object> 수정 결과
      */
     public Map<String, Object> memoProm(int promId, String memo, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -250,18 +273,20 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "메모를 추가할 권한이 없습니다.");
                 return result;
             }
 
             // 3. 메모 추가 (기존 메모가 있으면 추가)
-            String currentMemo = prom.getProm_memo();
+            String currentMemo = prom.getPromMemo();
             if (currentMemo != null && !currentMemo.isEmpty()) {
-                prom.setProm_memo(currentMemo + "\n" + memo);
+                // 기존 메모 + 줄바꿈 + 새 메모
+                prom.setPromMemo(currentMemo + "\n" + memo);
             } else {
-                prom.setProm_memo(memo);
+                // 첫 메모
+                prom.setPromMemo(memo);
             }
 
             // 4. 저장
@@ -269,7 +294,7 @@ public class PromService {
 
             result.put("success", true);
             result.put("message", "메모가 추가되었습니다.");
-            result.put("memo", prom.getProm_memo());
+            result.put("memo", prom.getPromMemo());
 
             return result;
 
@@ -286,9 +311,11 @@ public class PromService {
 
     /**
      * PM-04 약속 취소 (삭제)
+     * 약속과 관련된 모든 데이터 삭제
+     *
      * @param promId 약속 ID
      * @param userId 사용자 ID
-     * @return 삭제 결과
+     * @return Map<String, Object> 삭제 결과
      */
     public Map<String, Object> deleteProm(int promId, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -306,7 +333,7 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "약속을 취소할 권한이 없습니다.");
                 return result;
@@ -314,6 +341,7 @@ public class PromService {
 
             // 3. 약속 삭제
             // 연관된 Share, Calend도 Cascade로 삭제되도록 설정 필요
+            // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
             promRepository.deleteById(promId);
 
             result.put("success", true);
@@ -334,10 +362,12 @@ public class PromService {
 
     /**
      * PM-05 약속 전체조회
+     * 사용자의 약속 목록 조회 (날짜 범위 필터링 가능)
+     *
      * @param userId 사용자 ID
      * @param startDate 조회 시작 날짜 (옵션)
      * @param endDate 조회 종료 날짜 (옵션)
-     * @return 약속 목록
+     * @return Map<String, Object> 약속 목록
      */
     public Map<String, Object> getProm(int userId, LocalDateTime startDate, LocalDateTime endDate) {
         Map<String, Object> result = new HashMap<>();
@@ -357,11 +387,12 @@ public class PromService {
 
             // 2. 날짜 범위가 있으면 범위 조회, 없으면 전체 조회
             if (startDate != null && endDate != null) {
+                // 특정 기간의 약속 조회 (캘린더 월별 조회 등에 사용)
                 promList = promRepository.findByUsersEntityAndPromDateBetween(
                         user, startDate, endDate
                 );
             } else {
-                // 날짜 순으로 정렬하여 조회
+                // 모든 약속 조회 (날짜 순으로 정렬)
                 promList = promRepository.findByUsersEntityOrderByPromDateAsc(user);
             }
 
@@ -383,15 +414,19 @@ public class PromService {
         }
     }
 
+    // PromService.java 계속...
+
     // ============================================
     // [6] 약속 상세조회 (PM-06)
     // ============================================
 
     /**
      * PM-06 약속 상세조회
+     * 약속 정보와 함께 공유 정보, 반복 정보도 조회
+     *
      * @param promId 약속 ID
      * @param userId 사용자 ID (권한 확인용)
-     * @return 약속 상세 정보
+     * @return Map<String, Object> 약속 상세 정보
      */
     public Map<String, Object> getDetailProm(int promId, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -409,7 +444,7 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인 (본인 약속만 조회 가능)
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "약속을 조회할 권한이 없습니다.");
                 return result;
@@ -420,6 +455,7 @@ public class PromService {
             result.put("promise", prom.toDto());
 
             // 4. 공유 정보도 함께 조회
+            // 이 약속을 누구와 공유했는지 확인
             List<ShareEntity> shareList = shareRepository.findByPromEntity(prom);
             List<ShareDto> shareDtoList = shareList.stream()
                     .map(ShareEntity::toDto)
@@ -429,6 +465,7 @@ public class PromService {
             result.put("shareCount", shareDtoList.size());
 
             // 5. 반복 약속 정보도 조회
+            // 주간, 월간 반복 약속 설정 확인
             List<CalendEntity> calendList = calendRepository.findByPromEntity(prom);
             List<CalendDto> calendDtoList = calendList.stream()
                     .map(CalendEntity::toDto)
@@ -451,9 +488,11 @@ public class PromService {
 
     /**
      * PM-07 약속 공유
+     * 약속을 공유할 수 있는 링크 생성 (카카오톡 공유 등에 사용)
+     *
      * @param promId 약속 ID
      * @param userId 사용자 ID
-     * @return 공유 링크 정보
+     * @return Map<String, Object> 공유 링크 정보
      */
     public Map<String, Object> shareProm(int promId, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -471,13 +510,14 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "약속을 공유할 권한이 없습니다.");
                 return result;
             }
 
             // 3. Share Entity 생성 (토큰은 자동 생성됨)
+            // UUID를 사용하여 고유한 공유 토큰 생성
             ShareEntity share = ShareEntity.builder()
                     .promEntity(prom)
                     .build();
@@ -485,19 +525,20 @@ public class PromService {
             ShareEntity savedShare = shareRepository.save(share);
 
             // 4. 공유 링크 생성
-            String shareUrl = "https://yourdomain.com/promise/share/" + savedShare.getShare_token();
+            String shareUrl = "https://yourdomain.com/promise/share/" + savedShare.getShareToken();
 
             // 5. 카카오톡 공유 정보 생성
+            // 카카오톡 링크 공유 API에 필요한 정보 구성
             Map<String, String> kakaoShareInfo = new HashMap<>();
-            kakaoShareInfo.put("title", prom.getProm_title());
-            kakaoShareInfo.put("description", prom.getProm_text());
+            kakaoShareInfo.put("title", prom.getPromTitle());
+            kakaoShareInfo.put("description", prom.getPromText());
             kakaoShareInfo.put("link", shareUrl);
 
-            if (prom.getProm_date() != null) {
-                kakaoShareInfo.put("date", prom.getProm_date().toString());
+            if (prom.getPromDate() != null) {
+                kakaoShareInfo.put("date", prom.getPromDate().toString());
             }
-            if (prom.getProm_addr() != null) {
-                kakaoShareInfo.put("location", prom.getProm_addr());
+            if (prom.getPromAddr() != null) {
+                kakaoShareInfo.put("location", prom.getPromAddr());
             }
 
             result.put("success", true);
@@ -521,10 +562,12 @@ public class PromService {
 
     /**
      * PM-08 약속 평가
-     * @param evalDto 평가 정보 (PromEvaluationDto 사용)
+     * 약속 참여자가 약속에 대한 평가 등록 (약속 종료 후 하루까지)
+     *
+     * @param evalDto 평가 정보
      * @param shareId 공유 ID
      * @param isTemp 임시 사용자 여부
-     * @return 평가 결과
+     * @return Map<String, Object> 평가 결과
      */
     public Map<String, Object> evalProm(PromEvaluationDto evalDto, int shareId, boolean isTemp) {
         Map<String, Object> result = new HashMap<>();
@@ -542,7 +585,7 @@ public class PromService {
             ShareEntity share = shareOpt.get();
 
             // 2. 약속 종료 후 하루까지만 평가 가능
-            LocalDateTime promDate = share.getPromEntity().getProm_date();
+            LocalDateTime promDate = share.getPromEntity().getPromDate();
             LocalDateTime now = LocalDateTime.now();
 
             if (promDate != null && now.isAfter(promDate.plusDays(1))) {
@@ -561,8 +604,8 @@ public class PromService {
             EvalEntity eval;
 
             // 4-1. 회원 사용자 평가
-            if (!isTemp && evalDto.getUser_id() != null) {
-                Optional<UsersEntity> userOpt = usersRepository.findById(evalDto.getUser_id());
+            if (!isTemp && evalDto.getUserId() != null) {
+                Optional<UsersEntity> userOpt = usersRepository.findById(evalDto.getUserId());
 
                 if (userOpt.isEmpty()) {
                     result.put("success", false);
@@ -580,6 +623,7 @@ public class PromService {
                     return result;
                 }
 
+                // 평가 Entity 생성
                 eval = EvalEntity.builder()
                         .usersEntity(userOpt.get())
                         .shareEntity(share)
@@ -590,16 +634,16 @@ public class PromService {
                 // 임시 사용자 생성 또는 조회
                 TempEntity temp;
 
-                if (evalDto.getTemp_id() != null && evalDto.getTemp_id() > 0) {
+                if (evalDto.getTempId() != null && evalDto.getTempId() > 0) {
                     // 기존 임시 사용자
-                    temp = tempRepository.findById(evalDto.getTemp_id()).orElse(null);
+                    temp = tempRepository.findById(evalDto.getTempId()).orElse(null);
                 } else {
                     // 새로운 임시 사용자 생성
                     TempEntity.TempEntityBuilder tempBuilder = TempEntity.builder();
 
                     // 임시 사용자 이름이 제공되면 설정
-                    if (evalDto.getTemp_name() != null && !evalDto.getTemp_name().isEmpty()) {
-                        tempBuilder.temp_name(evalDto.getTemp_name());
+                    if (evalDto.getTempName() != null && !evalDto.getTempName().isEmpty()) {
+                        tempBuilder.tempName(evalDto.getTempName());
                     }
 
                     temp = tempBuilder.build();
@@ -622,12 +666,11 @@ public class PromService {
             EvalEntity savedEval = evalRepository.save(eval);
 
             // 6. Share 테이블의 평가 정보 업데이트
-            // evalDto에서 평가 정보 가져오기
-            share.setShare_check(evalDto.getShare_check());
-            share.setShare_score(evalDto.getShare_score() > 0 ? evalDto.getShare_score() : 3);
+            share.setShareCheck(evalDto.getShareCheck());
+            share.setShareScore(evalDto.getShareScore() > 0 ? evalDto.getShareScore() : 3);
 
-            if (evalDto.getShare_feedback() != null && !evalDto.getShare_feedback().isEmpty()) {
-                share.setShare_feedback(evalDto.getShare_feedback());
+            if (evalDto.getShareFeedback() != null && !evalDto.getShareFeedback().isEmpty()) {
+                share.setShareFeedback(evalDto.getShareFeedback());
             }
 
             shareRepository.save(share);
@@ -659,10 +702,12 @@ public class PromService {
 
     /**
      * PM-09 반복 약속 등록
+     * 매주, 매월 등 반복되는 약속 설정
+     *
      * @param calendDto 반복 약속 정보
      * @param promId 약속 ID
      * @param userId 사용자 ID
-     * @return 등록 결과
+     * @return Map<String, Object> 등록 결과
      */
     public Map<String, Object> createCycleProm(CalendDto calendDto, int promId, int userId) {
         Map<String, Object> result = new HashMap<>();
@@ -680,7 +725,7 @@ public class PromService {
             PromEntity prom = promOpt.get();
 
             // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 등록할 권한이 없습니다.");
                 return result;
@@ -704,22 +749,17 @@ public class PromService {
     }
 
     // ============================================
-    // [10] 반복 약속 전체조회 (PM-10)
+    // [10~13] 반복 약속 조회/수정/삭제
     // ============================================
 
     /**
      * PM-10 반복 약속 전체조회
-     * @param promId 약속 ID
-     * @param userId 사용자 ID
-     * @return 반복 약속 목록
      */
     public Map<String, Object> getCycleProm(int promId, int userId) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // 1. 약속 조회
             Optional<PromEntity> promOpt = promRepository.findById(promId);
-
             if (promOpt.isEmpty()) {
                 result.put("success", false);
                 result.put("message", "약속을 찾을 수 없습니다.");
@@ -727,15 +767,12 @@ public class PromService {
             }
 
             PromEntity prom = promOpt.get();
-
-            // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 조회할 권한이 없습니다.");
                 return result;
             }
 
-            // 3. 반복 약속 목록 조회
             List<CalendEntity> calendList = calendRepository.findByPromEntity(prom);
             List<CalendDto> calendDtoList = calendList.stream()
                     .map(CalendEntity::toDto)
@@ -746,7 +783,6 @@ public class PromService {
             result.put("totalCount", calendDtoList.size());
 
             return result;
-
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "반복 약속 조회 실패: " + e.getMessage());
@@ -754,23 +790,14 @@ public class PromService {
         }
     }
 
-    // ============================================
-    // [11] 반복 약속 상세조회 (PM-11)
-    // ============================================
-
     /**
      * PM-11 반복 약속 상세조회
-     * @param calendId 반복 약속 ID
-     * @param userId 사용자 ID
-     * @return 반복 약속 상세 정보
      */
     public Map<String, Object> getDetailCycleProm(int calendId, int userId) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // 1. 반복 약속 조회
             Optional<CalendEntity> calendOpt = calendRepository.findById(calendId);
-
             if (calendOpt.isEmpty()) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 찾을 수 없습니다.");
@@ -780,20 +807,17 @@ public class PromService {
             CalendEntity calend = calendOpt.get();
             PromEntity prom = calend.getPromEntity();
 
-            // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 조회할 권한이 없습니다.");
                 return result;
             }
 
-            // 3. 반복 약속 정보 반환
             result.put("success", true);
             result.put("cycle", calend.toDto());
             result.put("promise", prom.toDto());
 
             return result;
-
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "반복 약속 조회 실패: " + e.getMessage());
@@ -801,23 +825,14 @@ public class PromService {
         }
     }
 
-    // ============================================
-    // [12] 반복 약속 수정 (PM-12)
-    // ============================================
-
     /**
      * PM-12 반복 약속 수정
-     * @param calendDto 수정할 반복 약속 정보
-     * @param userId 사용자 ID
-     * @return 수정 결과
      */
     public Map<String, Object> updateCycleProm(CalendDto calendDto, int userId) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // 1. 반복 약속 조회
-            Optional<CalendEntity> calendOpt = calendRepository.findById(calendDto.getCalend_id());
-
+            Optional<CalendEntity> calendOpt = calendRepository.findById(calendDto.getCalendId());
             if (calendOpt.isEmpty()) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 찾을 수 없습니다.");
@@ -827,25 +842,23 @@ public class PromService {
             CalendEntity calend = calendOpt.get();
             PromEntity prom = calend.getPromEntity();
 
-            // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 수정할 권한이 없습니다.");
                 return result;
             }
 
-            // 3. 수정 가능한 필드 업데이트
-            if (calendDto.getCalend_cycle() != null) {
-                calend.setCalend_cycle(calendDto.getCalend_cycle());
+            // 수정 가능한 필드 업데이트
+            if (calendDto.getCalendCycle() != null) {
+                calend.setCalendCycle(calendDto.getCalendCycle());
             }
-            if (calendDto.getCalend_start() != null) {
-                calend.setCalend_start(calendDto.getCalend_start());
+            if (calendDto.getCalendStart() != null) {
+                calend.setCalendStart(calendDto.getCalendStart());
             }
-            if (calendDto.getCalend_end() != null) {
-                calend.setCalend_end(calendDto.getCalend_end());
+            if (calendDto.getCalendEnd() != null) {
+                calend.setCalendEnd(calendDto.getCalendEnd());
             }
 
-            // 4. 저장
             CalendEntity updatedCalend = calendRepository.save(calend);
 
             result.put("success", true);
@@ -853,7 +866,6 @@ public class PromService {
             result.put("cycle", updatedCalend.toDto());
 
             return result;
-
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "반복 약속 수정 실패: " + e.getMessage());
@@ -861,23 +873,14 @@ public class PromService {
         }
     }
 
-    // ============================================
-    // [13] 반복 약속 삭제 (PM-13)
-    // ============================================
-
     /**
      * PM-13 반복 약속 삭제
-     * @param calendId 반복 약속 ID
-     * @param userId 사용자 ID
-     * @return 삭제 결과
      */
     public Map<String, Object> deleteCycleProm(int calendId, int userId) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // 1. 반복 약속 조회
             Optional<CalendEntity> calendOpt = calendRepository.findById(calendId);
-
             if (calendOpt.isEmpty()) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 찾을 수 없습니다.");
@@ -887,21 +890,18 @@ public class PromService {
             CalendEntity calend = calendOpt.get();
             PromEntity prom = calend.getPromEntity();
 
-            // 2. 권한 확인
-            if (prom.getUsersEntity().getUser_id() != userId) {
+            if (prom.getUsersEntity().getUserId() != userId) {
                 result.put("success", false);
                 result.put("message", "반복 약속을 삭제할 권한이 없습니다.");
                 return result;
             }
 
-            // 3. 삭제
             calendRepository.deleteById(calendId);
 
             result.put("success", true);
             result.put("message", "반복 약속이 삭제되었습니다.");
 
             return result;
-
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "반복 약속 삭제 실패: " + e.getMessage());
@@ -915,20 +915,20 @@ public class PromService {
 
     /**
      * 공유 토큰으로 약속 조회 (비회원도 접근 가능)
+     * 카카오톡 등으로 공유된 링크를 통해 약속 정보 확인
+     *
      * @param shareToken 공유 토큰
-     * @return 약속 정보
+     * @return Map<String, Object> 약속 정보
      */
     public Map<String, Object> getPromByShareToken(String shareToken) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // 1. Share 토큰으로 조회 (Repository에 메서드 추가 필요)
-            // Optional<ShareEntity> shareOpt = shareRepository.findByShareToken(shareToken);
-
-            // 임시로 전체 조회 후 필터링 (실제로는 위의 메서드 사용)
+            // 1. Share 토큰으로 조회
+            // TODO: Repository에 findByShareToken 메서드 추가 필요
             List<ShareEntity> allShares = shareRepository.findAll();
             Optional<ShareEntity> shareOpt = allShares.stream()
-                    .filter(s -> s.getShare_token().equals(shareToken))
+                    .filter(s -> s.getShareToken().equals(shareToken))
                     .findFirst();
 
             if (shareOpt.isEmpty()) {
@@ -941,16 +941,17 @@ public class PromService {
             PromEntity prom = share.getPromEntity();
 
             // 2. 약속 정보 반환 (민감한 정보 제외)
+            // 비회원도 볼 수 있으므로 필요한 정보만 제공
             Map<String, Object> promInfo = new HashMap<>();
-            promInfo.put("title", prom.getProm_title());
-            promInfo.put("date", prom.getProm_date());
-            promInfo.put("location", prom.getProm_addr());
-            promInfo.put("locationDetail", prom.getProm_addr_detail());
-            promInfo.put("text", prom.getProm_text());
+            promInfo.put("title", prom.getPromTitle());
+            promInfo.put("date", prom.getPromDate());
+            promInfo.put("location", prom.getPromAddr());
+            promInfo.put("locationDetail", prom.getPromAddrDetail());
+            promInfo.put("text", prom.getPromText());
 
             result.put("success", true);
             result.put("promise", promInfo);
-            result.put("shareId", share.getShare_id());
+            result.put("shareId", share.getShareId());
 
             return result;
 

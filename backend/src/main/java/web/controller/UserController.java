@@ -91,7 +91,7 @@ public class UserController {
 
         try {
             Integer userId = getUserIdFromRequest(request);
-            usersDto.setUser_id(userId);  // 현재 로그인한 사용자 ID 설정
+            usersDto.setUserId(userId);  // 현재 로그인한 사용자 ID 설정
 
             UsersDto updatedUser = userService.updateMyInfo(usersDto);
 

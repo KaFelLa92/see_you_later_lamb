@@ -56,7 +56,6 @@ public class PromEntity extends BaseTime {
      * - 범위: -90 ~ 90
      * - CHECK 제약조건으로 유효성 검증
      */
-    @Column(columnDefinition = "DOUBLE CHECK (prom_lat BETWEEN -90 AND 90)")
     private Double promLat;                // 약속 장소 위도
 
     /**
@@ -64,7 +63,6 @@ public class PromEntity extends BaseTime {
      * - 범위: -180 ~ 180
      * - CHECK 제약조건으로 유효성 검증
      */
-    @Column(columnDefinition = "DOUBLE CHECK (prom_lng BETWEEN -180 AND 180)")
     private Double promLng;                // 약속 장소 경도
 
     @Column(nullable = false)
@@ -131,5 +129,24 @@ public class PromEntity extends BaseTime {
                 .createDate(this.getCreateDate().toString())
                 .updateDate(this.getUpdateDate().toString())
                 .build();
+    }
+
+    // ========== 5. 비즈니스 로직 - 위도/경도 검증 ==========
+    /**
+     * 위도 유효성 검증 메서드
+     * @param lat 위도 값
+     * @return 유효하면 true, 아니면 false
+     */
+    public static boolean isValidLatitude(Double lat) {
+        return lat == null || (lat >= -90 && lat <= 90);
+    }
+
+    /**
+     * 경도 유효성 검증 메서드
+     * @param lng 경도 값
+     * @return 유효하면 true, 아니면 false
+     */
+    public static boolean isValidLongitude(Double lng) {
+        return lng == null || (lng >= -180 && lng <= 180);
     }
 }

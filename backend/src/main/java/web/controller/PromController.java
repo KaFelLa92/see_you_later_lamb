@@ -104,7 +104,7 @@ public class PromController {
             @RequestBody PromDto promDto) {
 
         Integer userId = getUserIdFromRequest(request);
-        promDto.setProm_id(promId);
+        promDto.setPromId(promId);
 
         Map<String, Object> result = promService.updateProm(promDto, userId);
 
@@ -419,7 +419,7 @@ public class PromController {
             @RequestBody CalendDto calendDto) {
 
         Integer userId = getUserIdFromRequest(request);
-        calendDto.setCalend_id(calendId);
+        calendDto.setCalendId(calendId);
 
         Map<String, Object> result = promService.updateCycleProm(calendDto, userId);
 

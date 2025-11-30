@@ -1,8 +1,8 @@
 package web.repository.promise;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import web.model.entity.promise.EvalEntity;
@@ -27,7 +27,7 @@ public interface EvalRepository extends JpaRepository<EvalEntity, Integer> {
     );
 
     // PM-08 약속 평가 - 임시 사용자가 평가했는지 확인
-    @Query("SELECT e FROM EvalEntity e WHERE e.shareEntity = :share AND e.tempEntity.temp_id = :tempId")
+    @Query("SELECT e FROM EvalEntity e WHERE e.shareEntity = :share AND e.tempEntity.tempId = :tempId")
     Optional<EvalEntity> findByShareAndTempId(
             @Param("share") ShareEntity shareEntity,
             @Param("tempId") int tempId

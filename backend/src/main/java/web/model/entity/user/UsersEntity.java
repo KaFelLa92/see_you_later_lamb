@@ -46,6 +46,10 @@ public class UsersEntity extends BaseTime {
     @Column(nullable = false)
     private String addrDetail;                                             // 상세 주소
 
+    @Column(nullable = false)
+    @Builder.Default
+    private int point = 0;                                                  // 사용자 포인트 (기본값: 0)
+
     /**
      * 사용자 상태 필드
      * -1: 삭제 계정

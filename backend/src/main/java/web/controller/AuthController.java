@@ -63,7 +63,7 @@ public class AuthController {
             // 3. 회원가입 처리
             UsersDto savedUser = userService.signUp(usersDto);
 
-            if (savedUser != null && savedUser.getUser_id() > 0) {
+            if (savedUser != null && savedUser.getUserId() > 0) {
                 response.put("success", true);
                 response.put("message", "회원가입 성공");
                 response.put("user", savedUser);

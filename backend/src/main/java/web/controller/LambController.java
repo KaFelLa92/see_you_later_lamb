@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import web.service.LambService;
 
 @RestController
-@RequestMapping("seeyoulaterlamb/lamb")
+@RequestMapping("api/lamb")
 @RequiredArgsConstructor
 public class LambController {
     // [*] DI
