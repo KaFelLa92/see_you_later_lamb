@@ -26,4 +26,12 @@ public interface AtenRepository extends JpaRepository<AtenEntity, Integer> {
     // [*] 특정 사용자의 출석 기록 개수 조회 (출석일수 확인용)
     long countByUsersEntity(UsersEntity usersEntity);
 
+    /**
+     * 특정 사용자의 출석 기록 조회
+     *
+     * @param userId 사용자 ID
+     * @return List<AtenEntity> 출석 기록 리스트
+     */
+    List<AtenEntity> findByUsersEntity_UserId(int userId);
+
 }

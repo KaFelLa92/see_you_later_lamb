@@ -18,8 +18,21 @@ public interface ShareRepository extends JpaRepository<ShareEntity, Integer> {
     // PM-08 약속 평가 - ID로 공유 조회
     Optional<ShareEntity> findById(Integer shareId);
 
-    // 공유 토큰으로 조회 (공유 링크 접근용)
+    /**
+     * 공유 토큰으로 약속 공유 조회
+     *
+     * @param shareToken 공유 토큰
+     * @return Optional<ShareEntity> 약속 공유 엔티티
+     */
     Optional<ShareEntity> findByShareToken(String shareToken);
+
+    /**
+     * 공유 토큰 존재 여부 확인
+     *
+     * @param shareToken 공유 토큰
+     * @return boolean 존재하면 true
+     */
+    boolean existsByShareToken(String shareToken);
 
     // 추가: 특정 약속의 공유 개수
     long countByPromEntity(PromEntity promEntity);

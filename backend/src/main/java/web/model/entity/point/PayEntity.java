@@ -89,16 +89,19 @@ public class PayEntity extends BaseTime {
     // ========== 4. Entity -> Dto 변환 메서드 ==========
     /**
      * 엔티티를 DTO로 변환하는 메서드
+     *
+     * 주의: 각 연관 엔티티는 nullable이므로 null 체크 필요
+     *
      * @return PayDto 포인트 지급 데이터 전송 객체
      */
     public PayDto toDto() {
         return PayDto.builder()
                 .payId(this.payId)
-                .atenId(this.atenEntity.getAtenId())
-                .shareId(this.shareEntity.getShareId())
-                .workId(this.workEntity.getWorkId())
-                .farmId(this.farmEntity.getFarmId())
-                .pointId(this.pointEntity.getPointId())
+                .atenId(this.atenEntity != null ? this.atenEntity.getAtenId() : 0)
+                .shareId(this.shareEntity != null ? this.shareEntity.getShareId() : 0)
+                .workId(this.workEntity != null ? this.workEntity.getWorkId() : 0)
+                .farmId(this.farmEntity != null ? this.farmEntity.getFarmId() : 0)
+                .pointId(this.pointEntity != null ? this.pointEntity.getPointId() : 0)
                 .createDate(this.getCreateDate().toString())
                 .updateDate(this.getUpdateDate().toString())
                 .build();
