@@ -2,11 +2,14 @@ package web.model.entity.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import web.model.dto.user.UsersDto;
 import web.model.entity.BaseTime;
 import web.model.entity.common.UserRole;
 import web.model.entity.promise.PromEntity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,6 +150,7 @@ public class UsersEntity extends BaseTime {
                 .phone(this.phone)
                 .addr(this.addr)
                 .addrDetail(this.addrDetail)
+                .point(this.point)                                    // ✅ point 필드 추가
                 .userState(this.userState)
                 .signupType(this.signupType)
                 .createDate(this.getCreateDate().toString())

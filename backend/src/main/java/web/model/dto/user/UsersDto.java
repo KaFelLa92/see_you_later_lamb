@@ -28,6 +28,13 @@ public class UsersDto {
     private String addrDetail; // 상세 주소
 
     /**
+     * 사용자 포인트
+     * - 기본값: 0
+     * - 양수: 포인트 잔액
+     */
+    private int point;         // 사용자 포인트
+
+    /**
      * 사용자 상태
      * -1: 삭제 계정
      * 0: 휴면 계정
@@ -62,6 +69,7 @@ public class UsersDto {
                 .phone(phone)
                 .addr(addr)
                 .addrDetail(addrDetail)
+                .point(point)           // ✅ point 필드 추가
                 .userState(userState)
                 .signupType(signupType)
                 .role(role)

@@ -275,11 +275,6 @@ public enum ErrorCode {
     POINT_PAY_FAILED(5003, "포인트 지급에 실패했습니다."),
 
     /**
-     * 포인트 부족
-     */
-    INSUFFICIENT_POINTS(5004, "포인트가 부족합니다."),
-
-    /**
      * 이미 지급된 포인트
      */
     POINT_ALREADY_PAID(5005, "이미 포인트가 지급되었습니다.");

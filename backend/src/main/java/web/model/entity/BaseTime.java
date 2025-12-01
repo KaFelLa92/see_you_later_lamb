@@ -20,4 +20,5 @@ public class BaseTime  {
 
     @LastModifiedDate
     private LocalDateTime updateDate;
+
 }
