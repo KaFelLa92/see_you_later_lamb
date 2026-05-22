@@ -17,6 +17,8 @@ import web.model.dto.lamb.request.*;
 import web.model.entity.common.UserRole;
 import web.service.LambService;
 
+import java.util.List;
+
 /**
  * 양(Lamb) 관련 API 컨트롤러
  * - 양 품종 관리 (관리자)

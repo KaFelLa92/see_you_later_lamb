@@ -10,3 +10,4 @@ SHOW DATABASES;
 
 -- 4. 사용할 DB 선택
 USE seeyoulaterlamb;
+
